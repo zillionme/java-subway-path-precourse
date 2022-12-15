@@ -35,24 +35,29 @@ public class StationGraph {
     }
 
     public void addSectionToDistanceGraph(String stationA, String stationB, int distance) {
+        distanceGraph.addVertex(stationA);
+        distanceGraph.addVertex(stationB);
         distanceGraph.setEdgeWeight(distanceGraph.addEdge(stationA, stationB), distance);
     }
 
     public void addSectionToTimeGraph(String stationA, String stationB, int time) {
+        timeGraph.addVertex(stationA);
+        timeGraph.addVertex(stationB);
         timeGraph.setEdgeWeight(timeGraph.addEdge(stationA, stationB), time);
     }
 
+    //최단거리 구하기
     public GraphPath getShortestDistance(String start, String end) {
         return dijkstraDistancePath.getPath(start, end);
     }
 
-    public List<String> getPathOfShortestDistance(String start, String end) {
-        return dijkstraDistancePath.getPath(start, end).getVertexList();
+    public List<String> getPathOfShortestDistance(List<String> stations) {
+        return dijkstraDistancePath.getPath(stations.get(0), stations.get(1)).getVertexList();
     }
 
     //GraphPath path를 컨트롤러에서하기.
-    public List<Double> getTotalDistanceAndTimeOfShortestDistance(String start, String end) {
-        GraphPath path = getShortestDistance(start, end);
+    public List<Double> getTotalDistanceAndTimeOfShortestDistance(List<String> stations) {
+        GraphPath path = getShortestDistance(stations.get(0), stations.get(1));
         List<String> pathByDistance = path.getVertexList();
 
         //최단 거리 - 총거리
@@ -72,13 +77,13 @@ public class StationGraph {
         return dijkstraTimePath.getPath(start, end);
     }
 
-    public List<String> getPathOfShortestTime(String start, String end) {
-        return dijkstraTimePath.getPath(start, end).getVertexList();
+    public List<String> getPathOfShortestTime(List<String> stations) {
+        return dijkstraTimePath.getPath(stations.get(0), stations.get(1)).getVertexList();
     }
 
     //GraphPath path를 컨트롤러에서하기.
-    public List<Double> getTotalDistanceAndTimeOfShortestTime(String start, String end) {
-        GraphPath path = getShortestTime(start, end);
+    public List<Double> getTotalDistanceAndTimeOfShortestTime(List<String> stations) {
+        GraphPath path = getShortestTime(stations.get(0), stations.get(1));
         List<String> pathByTime = path.getVertexList();
 
         //최소 시간 - 총 시간
@@ -87,7 +92,7 @@ public class StationGraph {
         double totalDistance = 0;
         for(int i =0; i<pathByTime.size()-1; i++) {
             DefaultWeightedEdge edge = distanceGraph.getEdge(pathByTime.get(i), pathByTime.get(i + 1));
-            totalTime += distanceGraph.getEdgeWeight(edge);
+            totalDistance += distanceGraph.getEdgeWeight(edge);
         }
 
         return List.of(totalDistance, totalTime);
